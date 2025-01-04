@@ -1,0 +1,48 @@
+# Summary of Files in `client` Directory
+
+## `client/src/components/ModalWrapper.jsx`
+- **Purpose**: This file defines a `ModalWrapper` component that uses the `Dialog` and `Transition` components from `@headlessui/react` to create a modal dialog with transition effects.
+- **Key Components**:
+  - `Transition.Root`: Handles the transition of the modal.
+  - `Dialog`: Represents the modal dialog.
+  - `Transition.Child`: Handles the transition of the modal's child elements.
+  - `useRef`: Used to create a reference for the cancel button.
+  - `children`: Represents the content inside the modal.
+
+## `client/src/store.js`
+- **Purpose**: This file sets up the Redux store for the application using `@reduxjs/toolkit`.
+- **Key Components**:
+  - `configureStore`: Function from `@reduxjs/toolkit` to configure the Redux store.
+  - `authReducer`: Reducer for authentication state.
+  - `apiSlice`: Slice for handling API interactions.
+  - `middleware`: Adds custom middleware to the store.
+  - `devTools`: Enables Redux DevTools for debugging.
+
+## `client/src/slices/authSlice.js`
+- **Purpose**: This file defines the authentication slice for Redux state management.
+- **Key Components**:
+  - `createSlice`: Function from `@reduxjs/toolkit` to create a slice of the Redux state.
+  - `initialState`: Initial state for the authentication slice.
+  - `reducers`: Object containing reducer functions for handling authentication actions.
+  - `actions`: Exported actions for use in components.
+
+## `client/src/slices/apiSlice.js`
+- **Purpose**: This file defines the API slice for handling API interactions using Redux Toolkit's `createApi`.
+- **Key Components**:
+  - `createApi`: Function from `@reduxjs/toolkit/query` to create an API slice.
+  - `baseQuery`: Base query configuration for API requests.
+  - `endpoints`: Object containing endpoint definitions for API interactions.
+
+## `client/src/App.js`
+- **Purpose**: This file defines the main application component.
+- **Key Components**:
+  - `BrowserRouter`: Component from `react-router-dom` for handling routing.
+  - `Routes` and `Route`: Components from `react-router-dom` for defining routes.
+  - `Provider`: Component from `react-redux` to provide the Redux store to the application.
+  - `store`: The Redux store configured in `store.js`.
+
+## `client/src/index.js`
+- **Purpose**: This file is the entry point for the React application.
+- **Key Components**:
+  - `ReactDOM.render`: Function to render the main application component into the DOM.
+  - `App`: The main application component.

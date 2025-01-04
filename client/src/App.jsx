@@ -11,6 +11,8 @@ import Trash from './pages/Trash';
 import TaskDetails from './pages/TaskDetails';
 import Sidebar from './components/Sidebar';
 import Navbar from './components/Navbar';
+import clsx from "clsx";
+import { setOpenSidebar } from "./redux/slices/authSlice";
 
 
 function Layout() {
