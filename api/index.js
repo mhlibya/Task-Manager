@@ -14,7 +14,7 @@ const routes = require('./routes/index');
 
 dotenv.config();
 const mongoURI = process.env.MONGO_URI;
-const port = process.env.PORT || 8800;
+const port = process.env.PORT;
 
 mongoose.connect(mongoURI, {
     useNewUrlParser: true,

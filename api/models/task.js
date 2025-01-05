@@ -4,6 +4,7 @@ const schema = mongoose.Schema;
 const taskSchema = new schema({
     author: {
         type: schema.Types.ObjectId,
+        ref: 'User',
         required: true
     },
     title: {
@@ -40,4 +41,5 @@ const taskSchema = new schema({
     }
 });
 
-module.exports = taskSchema;
+const Task = mongoose.model('Task', taskSchema);
+module.exports = Task;
