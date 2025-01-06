@@ -1,13 +1,15 @@
 const express = require('express');
-const { createTask, getTasks, getTrashedTasks, getTaskById, updateTask, trashTask } = require('../controllers/taskController');
+const { createTask, getTasks, getTrashedTasks, viewTaskById, getTaskById, updateTask, toggleTrashTask, changeTaskStatus } = require('../controllers/taskController');
 const { protect } = require('../middleware/authMiddleware');
 const router = express.Router();
 
 router.post('/', protect, createTask);
 router.get('/', protect, getTasks);
-router.get('/trashed', protect, getTrashedTasks);
-router.get('/:id', protect, getTaskById);
+router.get('/trash', protect, getTrashedTasks);
+router.get('/view/:id', protect, viewTaskById);
+router.get('/json/:id', protect, getTaskById);
 router.put('/:id', protect, updateTask);
-router.delete('/:id', protect, trashTask);
+router.put('/toggle-trash/:id', protect, toggleTrashTask);
+router.put('/status/:id', protect, changeTaskStatus);
 
 module.exports = router;

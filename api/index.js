@@ -31,13 +31,17 @@ app.use(cookieParser());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: true}));
 
+// Set EJS as the templating engine
+app.set('view engine', 'ejs');
+app.set('views', path.join(__dirname, 'views'));
+
 // Serve static files from the pages directory
 app.use(express.static(path.join(__dirname, 'pages')));
 
 // Use routes
 app.use('/', routes);
-app.use('/api/auth', authRoutes);
-app.use('/api/tasks', taskRoutes);
+app.use('/auth', authRoutes);
+app.use('/tasks', taskRoutes);
 
 // Socket.io connection
 io.on('connection', (socket) => {

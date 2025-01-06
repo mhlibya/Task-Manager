@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trashed Tasks</title>
+</head>
+<body>
+    <h1>Trashed Tasks</h1>
+    <% if (tasks && tasks.length > 0) { %>
+        <ul>
+            <% tasks.forEach(task => { %>
+                <li>
+                    <h2><%= task.title %></h2>
+                    <p><%= task.description %></p>
+                    <p>Priority: <%= task.priority %></p>
+                    <p>Due Date: <%= task.due_date.toDateString() %></p>
+                    <p>Expected Duration: <%= task.expected_duration %> minutes</p>
+                    <p>Status: <%= task.status %></p>
+                </li>
+            <% }) %>
+        </ul>
+    <% } else { %>
+        <p>No trashed tasks found.</p>
+    <% } %>
+</body>
+</html>

@@ -47,7 +47,7 @@ const authUser = async (req, res) => {
             secure: process.env.NODE_ENV === 'production', // Use secure cookies in production
             maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days
         });
-        res.redirect('/api/tasks');
+        res.redirect('/tasks');
     } else {
         res.status(401).json({ message: 'Invalid username or password' });
     }

@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tasks</title>
+    <script>
+        async function changeStatus(taskId, newStatus) {
+            const response = await fetch(`/tasks/status/${taskId}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${document.cookie.split('=')[1]}`
+                },
+                body: JSON.stringify({ status: newStatus })
+            });
+            if (response.ok) {
+                alert(`Task status changed to ${newStatus}`);
+                location.reload();
+            } else {
+                alert('Error changing task status');
+            }
+        }
+
+        function viewTask(taskId) {
+            window.location.href = `/tasks/view/${taskId}`;
+        }
+    </script>
+</head>
+<body>
+    <h1>Tasks</h1>
+    <button onclick="window.location.href='/create-task'">Create Task</button>
+    <% if (tasks && tasks.length > 0) { %>
+        <table border="1">
+            <thead>
+                <tr>
+                    <th>Pending</th>
+                    <th>In Progress</th>
+                    <th>Done</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>
+                        <% tasks.filter(task => task.status === 'pending').forEach(task => { %>
+                            <div onclick="viewTask('<%= task._id %>')"><%= task.title %></div>
+                        <% }) %>
+                    </td>
+                    <td>
+                        <% tasks.filter(task => task.status === 'in progress').forEach(task => { %>
+                            <div onclick="viewTask('<%= task._id %>')"><%= task.title %></div>
+                        <% }) %>
+                    </td>
+                    <td>
+                        <% tasks.filter(task => task.status === 'done').forEach(task => { %>
+                            <div onclick="viewTask('<%= task._id %>')"><%= task.title %></div>
+                        <% }) %>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    <% } else { %>
+        <p>No tasks found.</p>
+    <% } %>
+</body>
+</html>

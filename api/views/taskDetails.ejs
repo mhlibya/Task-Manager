@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Task Details</title>
+    <script>
+        async function changeStatus(taskId, newStatus) {
+            const response = await fetch(`/tasks/status/${taskId}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${document.cookie.split('=')[1]}`
+                },
+                body: JSON.stringify({ status: newStatus })
+            });
+            if (response.ok) {
+                alert(`Task status changed to ${newStatus}`);
+                window.location.href = `/tasks/status/${taskId}`;
+            } else {
+                alert('Error changing task status');
+            }
+        }
+    </script>
+</head>
+<body>
+    <h1>Task Details</h1>
+    <h2><%= task.title %></h2>
+    <p><%= task.description %></p>
+    <p>Priority: <%= task.priority %></p>
+    <p>Due Date: <%= task.due_date.toDateString() %></p>
+    <p>Expected Duration: <%= task.expected_duration %> minutes</p>
+    <p>Status: <%= task.status %></p>
+    <button onclick="window.location.href='/edit-task/<%= task._id %>'">Edit Task</button>
+    <% if (task.status === 'pending') { %>
+        <button onclick="changeStatus('<%= task._id %>', 'in progress')">Start</button>
+    <% } %>
+</body>
+</html>
