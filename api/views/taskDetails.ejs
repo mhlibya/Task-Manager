@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Task Details</title>
+    <link rel="stylesheet" href="/styles.css">
     <script>
         async function changeStatus(taskId, newStatus) {
             const response = await fetch(`/tasks/status/${taskId}`, {
@@ -16,7 +17,7 @@
             });
             if (response.ok) {
                 alert(`Task status changed to ${newStatus}`);
-                window.location.href = `/tasks/status/${taskId}`;
+                window.location.href = '/tasks';
             } else {
                 alert('Error changing task status');
             }
@@ -24,16 +25,31 @@
     </script>
 </head>
 <body>
-    <h1>Task Details</h1>
-    <h2><%= task.title %></h2>
-    <p><%= task.description %></p>
-    <p>Priority: <%= task.priority %></p>
-    <p>Due Date: <%= task.due_date.toDateString() %></p>
-    <p>Expected Duration: <%= task.expected_duration %> minutes</p>
-    <p>Status: <%= task.status %></p>
-    <button onclick="window.location.href='/edit-task/<%= task._id %>'">Edit Task</button>
-    <% if (task.status === 'pending') { %>
-        <button onclick="changeStatus('<%= task._id %>', 'in progress')">Start</button>
-    <% } %>
+    <header>
+        <div class="container">
+            <div id="branding">
+                <h1>Task Manager</h1>
+            </div>
+            <nav>
+                <ul>
+                    <li><a href="/">Home</a></li>
+                    <li><a href="/tasks">Tasks</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+    <div class="container">
+        <h1>Task Details</h1>
+        <h2><%= task.title %></h2>
+        <p><%= task.description %></p>
+        <p>Priority: <%= task.priority %></p>
+        <p>Due Date: <%= task.due_date.toDateString() %></p>
+        <p>Expected Duration: <%= task.expected_duration %> minutes</p>
+        <p>Status: <%= task.status %></p>
+        <button onclick="window.location.href='/edit-task/<%= task._id %>'">Edit Task</button>
+        <% if (task.status === 'pending') { %>
+            <button onclick="changeStatus('<%= task._id %>', 'in progress')">Start</button>
+        <% } %>
+    </div>
 </body>
 </html>

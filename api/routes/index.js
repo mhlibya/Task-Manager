@@ -29,18 +29,4 @@ router.get('/edit-task/:id', protect, (req, res) => {
     res.sendFile(path.join(__dirname, '../pages/update-task.html'));
 });
 
-// Get a single task by ID
-const getTaskById = async (req, res) => {
-    try {
-        const task = await Task.findOne({ _id: req.params.id, author: req.user._id });
-        if (task) {
-            res.json(task);
-        } else {
-            res.status(404).json({ message: 'Task not found' });
-        }
-    } catch (err) {
-        res.status(400).json({ message: 'Error fetching task', error: err.message });
-    }
-};
-
 module.exports = router;

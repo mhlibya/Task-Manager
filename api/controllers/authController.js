@@ -15,7 +15,17 @@ const registerUser = async (req, res) => {
     const userExists = await User.findOne({ username });
 
     if (userExists) {
-        return res.status(400).json({ message: 'User already exists' });
+        return res.status(400).send(`
+            <html>
+            <head>
+            <title>Already exists</title></head>
+            <body>
+                <h1 style="margin: 0; display: flex; justify-content: center; align-items: center; height: 100vh; font-family: Arial, sans-serif;">
+                    Username has already been taken.
+                </h1>
+            </body>
+        </html>
+        `);
     }
 
     const user = await User.create({
@@ -24,13 +34,19 @@ const registerUser = async (req, res) => {
     });
 
     if (user) {
-        res.status(201).json({
-            _id: user._id,
-            username: user.username,
-            token: generateToken(user._id),
-        });
+        res.status(201).redirect('/login');
     } else {
-        res.status(400).json({ message: 'Invalid user data' });
+        res.status(400).send(`
+            <html>
+            <head>
+            <title>Invalid registration credentials</title></head>
+            <body>
+                <h1 style="margin: 0; display: flex; justify-content: center; align-items: center; height: 100vh; font-family: Arial, sans-serif;">
+                    Invalid username or password.
+                </h1>
+            </body>
+        </html>
+        `);
     }
 };
 
@@ -49,7 +65,17 @@ const authUser = async (req, res) => {
         });
         res.redirect('/tasks');
     } else {
-        res.status(401).json({ message: 'Invalid username or password' });
+        res.status(401).send(`
+            <html>
+            <head>
+            <title>Invalid login credentials</title></head>
+            <body>
+                <h1 style="margin: 0; display: flex; justify-content: center; align-items: center; height: 100vh; font-family: Arial, sans-serif;">
+                    Invalid username or password.
+                </h1>
+            </body>
+        </html>
+        `);
     }
 };
 
