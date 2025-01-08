@@ -11,7 +11,7 @@ const createTask = async (req, res) => {
         priority,
         due_date,
         expected_duration,
-        status: 'pending',
+        status: 'to do',
         trashed: false
     });
 
@@ -129,4 +129,18 @@ const changeTaskStatus = async (req, res) => {
     }
 };
 
-module.exports = { createTask, getTasks, getTrashedTasks, viewTaskById, getTaskById, updateTask, toggleTrashTask, changeTaskStatus };
+// Render the countdown page
+const renderCountdownPage = async (req, res) => {
+    try {
+        const task = await Task.findOne({ _id: req.params.id, author: req.user._id });
+        if (task) {
+            res.render('countdown', { task });
+        } else {
+            res.status(404).json({ message: 'Task not found' });
+        }
+    } catch (err) {
+        res.status(400).json({ message: 'Error fetching task', error: err.message });
+    }
+};
+
+module.exports = { createTask, getTasks, getTrashedTasks, viewTaskById, getTaskById, updateTask, toggleTrashTask, changeTaskStatus, renderCountdownPage };

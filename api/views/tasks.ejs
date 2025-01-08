@@ -50,7 +50,7 @@
             <table>
                 <thead>
                     <tr>
-                        <th>Pending</th>
+                        <th>to do</th>
                         <th>In Progress</th>
                         <th>Done</th>
                     </tr>
@@ -58,7 +58,7 @@
                 <tbody>
                     <tr>
                         <td>
-                            <% tasks.filter(task => task.status === 'pending').forEach(task => { %>
+                            <% tasks.filter(task => task.status === 'to do').forEach(task => { %>
                                 <div onclick="viewTask('<%= task._id %>')"><%= task.title %></div>
                             <% }) %>
                         </td>

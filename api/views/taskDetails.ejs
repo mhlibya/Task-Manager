@@ -16,8 +16,12 @@
                 body: JSON.stringify({ status: newStatus })
             });
             if (response.ok) {
-                alert(`Task status changed to ${newStatus}`);
-                window.location.href = '/tasks';
+                if (newStatus === 'in progress') {
+                    window.location.href = `/tasks/countdown/${taskId}`;
+                } else {
+                    alert(`Task status changed to ${newStatus}`);
+                    window.location.href = '/tasks';
+                }
             } else {
                 alert('Error changing task status');
             }
@@ -47,7 +51,7 @@
         <p>Expected Duration: <%= task.expected_duration %> minutes</p>
         <p>Status: <%= task.status %></p>
         <button onclick="window.location.href='/edit-task/<%= task._id %>'">Edit Task</button>
-        <% if (task.status === 'pending') { %>
+        <% if (task.status === 'to do') { %>
             <button onclick="changeStatus('<%= task._id %>', 'in progress')">Start</button>
         <% } %>
     </div>

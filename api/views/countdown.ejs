@@ -4,9 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Task Countdown</title>
+    <link rel="stylesheet" href="/styles.css">
     <script>
         let countdown;
         let timeLeft = <%= task.expected_duration %> * 60; // Convert minutes to seconds
+        let isPaused = false;
 
         function startCountdown() {
             countdown = setInterval(() => {
@@ -28,6 +30,16 @@
 
         function pauseCountdown() {
             clearInterval(countdown);
+            isPaused = true;
+            document.getElementById('pauseButton').innerText = 'Resume';
+            document.getElementById('pauseButton').onclick = resumeCountdown;
+        }
+
+        function resumeCountdown() {
+            startCountdown();
+            isPaused = false;
+            document.getElementById('pauseButton').innerText = 'Pause';
+            document.getElementById('pauseButton').onclick = pauseCountdown;
         }
 
         async function changeStatus(newStatus) {
@@ -51,14 +63,12 @@
     </script>
 </head>
 <body>
-    <h1>Task Countdown</h1>
-    <div id="timer">
-        <script>
-            document.write(formatTime(timeLeft));
-        </script>
-    </div>    
-    <button onclick="changeStatus('done')">Done</button>
-    <button onclick="pauseCountdown()">Pause</button>
-    <button onclick="changeStatus('pending')">Cancel</button>
+    <div class="container">
+        <h1>Task Countdown</h1>
+        <div id="timer"><%= task.expected_duration %>:00</div>
+        <button onclick="changeStatus('done')">Done</button>
+        <button id="pauseButton" onclick="pauseCountdown()">Pause</button>
+        <button onclick="changeStatus('to do')">Cancel</button>
+    </div>
 </body>
 </html>

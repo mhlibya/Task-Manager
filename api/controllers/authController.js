@@ -68,12 +68,21 @@ const authUser = async (req, res) => {
         res.status(401).send(`
             <html>
             <head>
-            <title>Invalid login credentials</title></head>
-            <body>
-                <h1 style="margin: 0; display: flex; justify-content: center; align-items: center; height: 100vh; font-family: Arial, sans-serif;">
-                    Invalid username or password.
-                </h1>
-            </body>
+            <title>Invalid login credentials</title>
+            <style>
+                body {
+                    margin: 0;
+                    padding: 0;
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+                    height: 100vh;
+                    background: url('/images/spongebob_squarepants.gif') no-repeat center center fixed;
+                    background-size: cover;
+                    font-family: Arial, sans-serif;
+                }
+            </style>
+            </head>
         </html>
         `);
     }

@@ -38,6 +38,9 @@ app.set('views', path.join(__dirname, 'views'));
 // Serve static files from the pages directory
 app.use(express.static(path.join(__dirname, 'pages')));
 
+// Serve static files from the images directory
+app.use('/images', express.static(path.join(__dirname, 'images')));
+
 // Use routes
 app.use('/', routes);
 app.use('/auth', authRoutes);
