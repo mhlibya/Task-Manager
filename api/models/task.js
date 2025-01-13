@@ -29,7 +29,7 @@ const taskSchema = new schema({
     },
     status: {
         type: String,
-        required: true
+        default: 'to do'
     },
     timestamp: {
         type: Date,
@@ -38,8 +38,13 @@ const taskSchema = new schema({
     trashed: {
         type: Boolean,
         default: false
+    },
+    delay: {
+        type: Number,
+        default: 0
     }
 });
 
 const Task = mongoose.model('Task', taskSchema);
+
 module.exports = Task;

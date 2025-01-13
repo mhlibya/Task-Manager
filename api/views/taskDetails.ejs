@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -50,9 +51,13 @@
         <p>Due Date: <%= task.due_date.toDateString() %></p>
         <p>Expected Duration: <%= task.expected_duration %> minutes</p>
         <p>Status: <%= task.status %></p>
-        <button onclick="window.location.href='/edit-task/<%= task._id %>'">Edit Task</button>
-        <% if (task.status === 'to do') { %>
-            <button onclick="changeStatus('<%= task._id %>', 'in progress')">Start</button>
+        <% if (task.status === 'done') { %>
+            <p>Delay: <%= isNaN(task.delay) ? 'No delay' : `${Math.floor(task.delay / 60)}:${task.delay % 60 < 10 ? '0' : ''}${task.delay % 60}` %></p>
+        <% } else { %>
+            <button onclick="window.location.href='/edit-task/<%= task._id %>'">Edit Task</button>
+            <% if (task.status === 'to do') { %>
+                <button onclick="changeStatus('<%= task._id %>', 'in progress')">Start</button>
+            <% } %>
         <% } %>
     </div>
 </body>

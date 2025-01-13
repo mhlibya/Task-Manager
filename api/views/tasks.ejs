@@ -7,7 +7,7 @@
     <link rel="stylesheet" href="/styles.css">
     <script>
         async function changeStatus(taskId, newStatus) {
-            const response = await fetch(`/tasks/status/${taskId}`, {
+            const response = await fetch(`/api/tasks/status/${taskId}`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
@@ -26,6 +26,20 @@
         function viewTask(taskId) {
             window.location.href = `/tasks/view/${taskId}`;
         }
+
+        async function logout() {
+            const response = await fetch('/auth/logout', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            });
+            if (response.ok) {
+                window.location.href = '/';
+            } else {
+                alert('Error logging out');
+            }
+        }
     </script>
 </head>
 <body>
@@ -36,9 +50,8 @@
             </div>
             <nav>
                 <ul>
-                    <li><a href="/">Home</a></li>
                     <li><a href="/tasks">Tasks</a></li>
-                    <li><a href="/create-task">Create Task</a></li>
+                    <li><a href="/tasks/trash">Trashed Tasks</a></li>
                 </ul>
             </nav>
         </div>
@@ -46,30 +59,37 @@
     <div class="container">
         <h1>Tasks</h1>
         <button onclick="window.location.href='/create-task'">Create Task</button>
-        <% if (tasks && tasks.length > 0) { %>
+        <% if (tasks && tasks.length > 0) { 
+            const priorityOrder = { 'high': 1, 'medium': 2, 'low': 3 };
+            const sortTasksByPriority = (tasks) => tasks.sort((a, b) => priorityOrder[a.priority.toLowerCase()] - priorityOrder[b.priority.toLowerCase()]);
+            const sortedToDoTasks = sortTasksByPriority(tasks.filter(task => task.status === 'to do'));
+            const sortedDoneTasks = sortTasksByPriority(tasks.filter(task => task.status === 'done'));
+        %>
             <table>
                 <thead>
                     <tr>
-                        <th>to do</th>
-                        <th>In Progress</th>
+                        <th>To Do</th>
                         <th>Done</th>
                     </tr>
                 </thead>
                 <tbody>
                     <tr>
                         <td>
-                            <% tasks.filter(task => task.status === 'to do').forEach(task => { %>
-                                <div onclick="viewTask('<%= task._id %>')"><%= task.title %></div>
+                            <% sortedToDoTasks.forEach(task => { %>
+                                <div class="task-title" onclick="viewTask('<%= task._id %>')">
+                                    <span class="priority-dot priority-<%= task.priority.toLowerCase() %>"></span>
+                                    <%= task.title %>
+                                </div>
+                                <div class="due-date">Due: <%= task.due_date.toDateString() %></div>
                             <% }) %>
                         </td>
                         <td>
-                            <% tasks.filter(task => task.status === 'in progress').forEach(task => { %>
-                                <div onclick="viewTask('<%= task._id %>')"><%= task.title %></div>
-                            <% }) %>
-                        </td>
-                        <td>
-                            <% tasks.filter(task => task.status === 'done').forEach(task => { %>
-                                <div onclick="viewTask('<%= task._id %>')"><%= task.title %></div>
+                            <% sortedDoneTasks.forEach(task => { %>
+                                <div class="task-title" onclick="viewTask('<%= task._id %>')">
+                                    <span class="priority-dot priority-<%= task.priority.toLowerCase() %>"></span>
+                                    <%= task.title %>
+                                </div>
+                                <div class="due-date">Due: <%= task.due_date.toDateString() %></div>
                             <% }) %>
                         </td>
                     </tr>
@@ -79,5 +99,6 @@
             <p>No tasks found.</p>
         <% } %>
     </div>
+    <button class="logout-button" onclick="logout()">Logout</button>
 </body>
 </html>

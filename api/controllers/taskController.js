@@ -2,7 +2,10 @@ const Task = require('../models/task');
 
 // Create a new task
 const createTask = async (req, res) => {
-    const { title, description, priority, due_date, expected_duration } = req.body;
+    const { title, description, priority, due_date, expected_duration_hours = 0, expected_duration_minutes = 0 } = req.body;
+    const hours = parseInt(expected_duration_hours, 10) || 0;
+    const minutes = parseInt(expected_duration_minutes, 10) || 0;
+    const expected_duration = (hours * 60) + minutes;
 
     const task = new Task({
         author: req.user._id,
@@ -12,7 +15,8 @@ const createTask = async (req, res) => {
         due_date,
         expected_duration,
         status: 'to do',
-        trashed: false
+        trashed: false,
+        delay: 0
     });
 
     try {
@@ -74,9 +78,15 @@ const getTaskById = async (req, res) => {
 // Update a task by ID
 const updateTask = async (req, res) => {
     try {
+        const { expected_duration_hours = 0, expected_duration_minutes = 0, ...rest } = req.body;
+        const hours = parseInt(expected_duration_hours, 10) || 0;
+        const minutes = parseInt(expected_duration_minutes, 10) || 0;
+        const expected_duration = (hours * 60) + minutes;
+        const taskData = { ...rest, expected_duration };
+
         const task = await Task.findOneAndUpdate(
             { _id: req.params.id, author: req.user._id },
-            req.body,
+            taskData,
             { new: true, runValidators: true }
         );
         if (task) {
@@ -110,9 +120,13 @@ const toggleTrashTask = async (req, res) => {
 // Change task status
 const changeTaskStatus = async (req, res) => {
     try {
+        const updateData = { status: req.body.status };
+        if (req.body.status === 'done' && !isNaN(req.body.delay)) {
+            updateData.delay = req.body.delay;
+        }
         const task = await Task.findOneAndUpdate(
             { _id: req.params.id, author: req.user._id },
-            { status: req.body.status },
+            updateData,
             { new: true }
         );
         if (task) {
@@ -143,4 +157,18 @@ const renderCountdownPage = async (req, res) => {
     }
 };
 
-module.exports = { createTask, getTasks, getTrashedTasks, viewTaskById, getTaskById, updateTask, toggleTrashTask, changeTaskStatus, renderCountdownPage };
+// Delete a task by ID
+const deleteTask = async (req, res) => {
+    try {
+        const task = await Task.findOneAndDelete({ _id: req.params.id, author: req.user._id });
+        if (task) {
+            res.json({ message: 'Task deleted successfully' });
+        } else {
+            res.status(404).json({ message: 'Task not found' });
+        }
+    } catch (err) {
+        res.status(400).json({ message: 'Error deleting task', error: err.message });
+    }
+};
+
+module.exports = { deleteTask, createTask, getTasks, getTrashedTasks, viewTaskById, getTaskById, updateTask, toggleTrashTask, changeTaskStatus, renderCountdownPage };

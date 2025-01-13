@@ -88,4 +88,10 @@ const authUser = async (req, res) => {
     }
 };
 
-module.exports = { registerUser, authUser };
+// Logout user
+const logoutUser = (req, res) => {
+    res.cookie('token', '', { maxAge: 1 });
+    res.status(200).json({ message: 'Logged out successfully' });
+};
+
+module.exports = { registerUser, authUser, logoutUser };

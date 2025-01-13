@@ -13,22 +13,93 @@
                 <h1>Task Manager</h1>
             </div>
             <nav>
-    <h1>Trashed Tasks</h1>
-    <% if (tasks && tasks.length > 0) { %>
-        <ul>
-            <% tasks.forEach(task => { %>
-                <li>
-                    <h2><%= task.title %></h2>
-                    <p><%= task.description %></p>
-                    <p>Priority: <%= task.priority %></p>
-                    <p>Due Date: <%= task.due_date.toDateString() %></p>
-                    <p>Expected Duration: <%= task.expected_duration %> minutes</p>
-                    <p>Status: <%= task.status %></p>
-                </li>
-            <% }) %>
-        </ul>
-    <% } else { %>
-        <p>No trashed tasks found.</p>
-    <% } %>
+                <ul>
+                    <li><a href="/tasks">Tasks</a></li>
+                    <li><a href="/tasks/trash">Trashed Tasks</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+    <div class="container">
+        <h1>Trashed Tasks</h1>
+        <% if (tasks && tasks.length > 0) { %>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Title</th>
+                        <th>Description</th>
+                        <th>Priority</th>
+                        <th>Due Date</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <% tasks.forEach(task => { %>
+                        <tr>
+                            <td><%= task.title %></td>
+                            <td><%= task.description %></td>
+                            <td><%= task.priority %></td>
+                            <td><%= task.due_date.toDateString() %></td>
+                            <td>
+                                <button onclick="restoreTask('<%= task._id %>')">Restore</button>
+                                <button onclick="deleteTask('<%= task._id %>')">Delete</button>
+                            </td>
+                        </tr>
+                    <% }) %>
+                </tbody>
+            </table>
+        <% } else { %>
+            <p>No trashed tasks found.</p>
+        <% } %>
+    </div>
+    <button class="logout-button" onclick="logout()">Logout</button>
+    <script>
+        async function restoreTask(taskId) {
+            const response = await fetch(`/tasks/toggle-trash/${taskId}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${document.cookie.split('=')[1]}`
+                },
+                body: JSON.stringify({ trashed: false })
+            });
+            if (response.ok) {
+                alert('Task restored successfully');
+                location.reload();
+            } else {
+                alert('Error restoring task');
+            }
+        }
+
+        async function deleteTask(taskId) {
+            const response = await fetch(`/tasks/${taskId}`, {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${document.cookie.split('=')[1]}`
+                }
+            });
+            if (response.ok) {
+                alert('Task deleted successfully');
+                location.reload();
+            } else {
+                alert('Error deleting task');
+            }
+        }
+
+        async function logout() {
+            const response = await fetch('/logout', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            });
+            if (response.ok) {
+                window.location.href = '/login';
+            } else {
+                alert('Error logging out');
+            }
+        }
+    </script>
 </body>
 </html>

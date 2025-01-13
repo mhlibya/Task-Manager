@@ -1,5 +1,5 @@
 const express = require('express');
-const { createTask, getTasks, getTrashedTasks, viewTaskById, getTaskById, updateTask, toggleTrashTask, changeTaskStatus, renderCountdownPage } = require('../controllers/taskController');
+const { deleteTask, createTask, getTasks, getTrashedTasks, viewTaskById, getTaskById, updateTask, toggleTrashTask, changeTaskStatus, renderCountdownPage } = require('../controllers/taskController');
 const { protect } = require('../middleware/authMiddleware');
 const router = express.Router();
 
@@ -9,6 +9,7 @@ router.get('/trash', protect, getTrashedTasks);
 router.get('/view/:id', protect, viewTaskById);
 router.get('/json/:id', protect, getTaskById);
 router.put('/:id', protect, updateTask);
+router.delete('/:id', protect, deleteTask);
 router.put('/toggle-trash/:id', protect, toggleTrashTask);
 router.put('/status/:id', protect, changeTaskStatus);
 router.get('/countdown/:id', protect, renderCountdownPage);

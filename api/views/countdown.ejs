@@ -5,20 +5,77 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Task Countdown</title>
     <link rel="stylesheet" href="/styles.css">
+    <style>
+        .timer-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-top: 20px;
+        }
+
+        .timer {
+            font-size: 3em;
+            font-weight: bold;
+            color: #fff;
+            background: rgba(0, 0, 0, 0.7);
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+            margin-bottom: 20px;
+        }
+
+        .delay-timer {
+            font-size: 2em;
+            font-weight: bold;
+            color: #ff0000;
+            background: rgba(0, 0, 0, 0.7);
+            padding: 15px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+        }
+
+        button {
+            background-color: #333;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 16px;
+            margin: 4px 2px;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+
+        button:hover {
+            background-color: #333;
+        }
+    </style>
     <script>
         let countdown;
+        let delayCount;
         let timeLeft = <%= task.expected_duration %> * 60; // Convert minutes to seconds
+        let delayTime = 0;
         let isPaused = false;
 
         function startCountdown() {
             countdown = setInterval(() => {
                 if (timeLeft <= 0) {
                     clearInterval(countdown);
-                    alert('Time is up!');
+                    startDelayCount();
                 } else {
                     timeLeft--;
                     document.getElementById('timer').innerText = formatTime(timeLeft);
                 }
+            }, 1000);
+        }
+
+        function startDelayCount() {
+            document.getElementById('delay-timer').style.display = 'block';
+            delayCount = setInterval(() => {
+                delayTime++;
+                document.getElementById('delay-timer').innerText = formatTime(delayTime);
             }, 1000);
         }
 
@@ -30,13 +87,18 @@
 
         function pauseCountdown() {
             clearInterval(countdown);
+            clearInterval(delayCount);
             isPaused = true;
             document.getElementById('pauseButton').innerText = 'Resume';
             document.getElementById('pauseButton').onclick = resumeCountdown;
         }
 
         function resumeCountdown() {
-            startCountdown();
+            if (timeLeft > 0) {
+                startCountdown();
+            } else {
+                startDelayCount();
+            }
             isPaused = false;
             document.getElementById('pauseButton').innerText = 'Pause';
             document.getElementById('pauseButton').onclick = pauseCountdown;
@@ -49,7 +111,7 @@
                     'Content-Type': 'application/json',
                     'Authorization': `Bearer ${document.cookie.split('=')[1]}`
                 },
-                body: JSON.stringify({ status: newStatus })
+                body: JSON.stringify({ status: newStatus, delay: delayTime })
             });
             if (response.ok) {
                 alert(`Task status changed to ${newStatus}`);
@@ -65,7 +127,10 @@
 <body>
     <div class="container">
         <h1>Task Countdown</h1>
-        <div id="timer"><%= task.expected_duration %>:00</div>
+        <div class="timer-container">
+            <div id="timer" class="timer"><%= task.expected_duration %>:00</div>
+            <div id="delay-timer" class="delay-timer" style="display: none;">0:00</div>
+        </div>
         <button onclick="changeStatus('done')">Done</button>
         <button id="pauseButton" onclick="pauseCountdown()">Pause</button>
         <button onclick="changeStatus('to do')">Cancel</button>

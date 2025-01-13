@@ -5,6 +5,27 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Update Task</title>
     <link rel="stylesheet" href="/styles.css">
+    <style>
+        .duration-input {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .duration-input input {
+            width: 50px;
+            text-align: center;
+            font-size: 1.2em;
+            padding: 5px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        .duration-input span {
+            font-size: 2em;
+            line-height: 1; /* Adjust line height to center the colon */
+        }
+    </style>
     <script>
         let isTrashed = false;
 
@@ -23,7 +44,10 @@
                 document.getElementById('description').value = task.description;
                 document.getElementById('priority').value = task.priority;
                 document.getElementById('due_date').value = task.due_date.split('T')[0];
-                document.getElementById('expected_duration').value = task.expected_duration;
+                const hours = Math.floor(task.expected_duration / 60);
+                const minutes = task.expected_duration % 60;
+                document.getElementById('expected_duration_hours').value = hours;
+                document.getElementById('expected_duration_minutes').value = minutes;
                 isTrashed = task.trashed;
                 document.getElementById('trashButton').innerText = isTrashed ? 'Untrash Task' : 'Trash Task';
                 document.getElementById('taskForm').style.display = 'block';
@@ -35,12 +59,16 @@
         async function updateTask(event) {
             event.preventDefault();
             const taskId = window.location.pathname.split('/').pop();
+            const hours = parseInt(document.getElementById('expected_duration_hours').value, 10) || 0;
+            const minutes = parseInt(document.getElementById('expected_duration_minutes').value, 10) || 0;
+            const expected_duration = (hours * 60) + minutes;
             const taskData = {
                 title: document.getElementById('title').value,
                 description: document.getElementById('description').value,
                 priority: document.getElementById('priority').value,
                 due_date: document.getElementById('due_date').value,
-                expected_duration: document.getElementById('expected_duration').value
+                expected_duration_hours: hours,
+                expected_duration_minutes: minutes
             };
             const response = await fetch(`/tasks/${taskId}`, {
                 method: 'PUT',
@@ -52,6 +80,7 @@
             });
             if (response.ok) {
                 alert('Task updated successfully');
+                window.location.href = '/tasks';
             } else {
                 alert('Error updating task');
             }
@@ -108,8 +137,12 @@
             </select>
             <label for="due_date">Due Date:</label>
             <input type="date" id="due_date" name="due_date" required>
-            <label for="expected_duration">Expected Duration (minutes):</label>
-            <input type="number" id="expected_duration" name="expected_duration" required>
+            <label for="expected_duration">Expected Duration:</label>
+            <div class="duration-input">
+                <input type="number" id="expected_duration_hours" name="expected_duration_hours" value="0" min="0" required>
+                <span>:</span>
+                <input type="number" id="expected_duration_minutes" name="expected_duration_minutes" value="0" min="0" max="59" required>
+            </div>
             <button type="submit">Update Task</button>
             <button type="button" id="trashButton" onclick="toggleTrashTask()">Trash Task</button>
         </form>
